@@ -1,81 +1,157 @@
 package main
 
 import (
+	"bufio"
 	"fmt"
+	"math"
 	"math/rand"
+	"os"
+	"strconv"
+	"strings"
+	"time"
+)
+
+const (
+	minValue = -100
+	maxValue = 100
 )
 
 func main() {
-	A, C := make([][]int, 5), make([][]int, 6)
-	for i := 0; i < 5; i++ {
-		A[i] = make([]int, 5)
-		for j := 0; j < 5; j++ {
-			A[i][j] = rand.Intn(10)
-		}
-	}
-	for i := 0; i < 6; i++ {
-		C[i] = make([]int, 6)
-		for j := 0; j < 6; j++ {
-			C[i][j] = rand.Intn(10)
-		}
+	reader := bufio.NewReader(os.Stdin)
+
+	fmt.Println("Выберите способ заполнения матриц:")
+	fmt.Println("1 — Ввод вручную (через пробел)")
+	fmt.Println("2 — Заполнение случайными числами")
+
+	mode := readIntInRange(reader, 1, 2)
+
+	var A [][]int
+	var C [][]int
+
+	if mode == 1 {
+		fmt.Println("\nВвод матрицы A (5x5):")
+		A = readMatrixByRows(reader, 5, 5)
+
+		fmt.Println("\nВвод матрицы C (6x6):")
+		C = readMatrixByRows(reader, 6, 6)
+	} else {
+		rand.Seed(time.Now().UnixNano())
+		A = randomMatrix(5, 5)
+		C = randomMatrix(6, 6)
 	}
 
-	fmt.Println("Матрица A:")
+	fmt.Println("\nИсходная матрица A:")
 	printMatrix(A)
-	fmt.Println("Матрица C:")
+
+	fmt.Println("\nИсходная матрица C:")
 	printMatrix(C)
 
-	sum, count := 0, 0
-	for i := 0; i < 5; i++ {
-		for j := 0; j < 5; j++ {
-			if i == j || j == 4-i {
-				sum += A[i][j]
-				count++
-			}
-		}
-	}
-	for i := 0; i < 6; i++ {
-		for j := 0; j < 6; j++ {
-			if i == j || j == 5-i {
-				sum += C[i][j]
-				count++
-			}
-		}
-	}
+	avg := calculateDiagonalAverage(A, C)
+	fmt.Printf("\nСреднее арифметическое диагональных элементов: %d\n", avg)
 
-	avg := sum / count
-	fmt.Printf("\nСреднее арифметическое диагональных элементов: %d\n\n", avg)
+	replaceNonDiagonal(A, avg)
+	replaceNonDiagonal(C, avg)
 
-	for i := 0; i < 5; i++ {
-		for j := 0; j < 5; j++ {
-			if !(i == j || j == 4-i) {
-				A[i][j] = avg
-			}
-		}
-	}
-	for i := 0; i < 6; i++ {
-		for j := 0; j < 6; j++ {
-			if !(i == j || j == 5-i) {
-				C[i][j] = avg
-			}
-		}
-	}
-
-	fmt.Println("Матрица A после замены недиагональных элементов:")
+	fmt.Println("\nПреобразованная матрица A:")
 	printMatrix(A)
-	fmt.Println("Матрица C после замены недиагональных элементов:")
+
+	fmt.Println("\nПреобразованная матрица C:")
 	printMatrix(C)
 }
 
-func printMatrix(m [][]int) {
-	fmt.Print("[")
-	for i, row := range m {
-		if i > 0 {
-			fmt.Print("\n ")
+func readIntInRange(reader *bufio.Reader, min, max int) int {
+	for {
+		input, _ := reader.ReadString('\n')
+		input = strings.TrimSpace(input)
+		value, err := strconv.Atoi(input)
+
+		if err != nil || value < min || value > max {
+			fmt.Printf("Ошибка! Введите целое число от %d до %d: ", min, max)
+			continue
 		}
-		for _, val := range row {
-			fmt.Printf(" %d", val)
+		return value
+	}
+}
+
+func readMatrixByRows(reader *bufio.Reader, rows, cols int) [][]int {
+	matrix := make([][]int, rows)
+
+	for i := 0; i < rows; i++ {
+		for {
+			fmt.Printf("Введите строку %d (%d чисел через пробел): ", i+1, cols)
+			line, _ := reader.ReadString('\n')
+			line = strings.TrimSpace(line)
+
+			parts := strings.Fields(line)
+			if len(parts) != cols {
+				fmt.Printf("Ошибка! Нужно ввести ровно %d чисел.\n", cols)
+				continue
+			}
+
+			row := make([]int, cols)
+			valid := true
+
+			for j, p := range parts {
+				val, err := strconv.Atoi(p)
+				if err != nil || val < minValue || val > maxValue {
+					fmt.Printf("Ошибка! Все элементы должны быть целыми числами от %d до %d.\n", minValue, maxValue)
+					valid = false
+					break
+				}
+				row[j] = val
+			}
+
+			if valid {
+				matrix[i] = row
+				break
+			}
 		}
 	}
-	fmt.Println(" ]\n")
+	return matrix
+}
+
+func randomMatrix(rows, cols int) [][]int {
+	matrix := make([][]int, rows)
+	for i := 0; i < rows; i++ {
+		matrix[i] = make([]int, cols)
+		for j := 0; j < cols; j++ {
+			matrix[i][j] = rand.Intn(maxValue-minValue+1) + minValue
+		}
+	}
+	return matrix
+}
+
+func calculateDiagonalAverage(A, C [][]int) int {
+	sum := 0
+	count := 0
+
+	for i := 0; i < len(A); i++ {
+		sum += A[i][i]
+		count++
+	}
+	for i := 0; i < len(C); i++ {
+		sum += C[i][i]
+		count++
+	}
+
+	return int(math.Round(float64(sum) / float64(count)))
+}
+
+func replaceNonDiagonal(matrix [][]int, value int) {
+	for i := 0; i < len(matrix); i++ {
+		for j := 0; j < len(matrix[i]); j++ {
+			if i != j {
+				matrix[i][j] = value
+			}
+		}
+	}
+}
+
+func printMatrix(matrix [][]int) {
+	for _, row := range matrix {
+		for _, val := range row {
+			fmt.Printf("%5d ", val)
+		}
+		fmt.Println()
+	}
 }
