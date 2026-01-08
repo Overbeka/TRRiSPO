@@ -1,0 +1,52 @@
+name: CI Pipeline
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  build-test-package:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: '1.20'
+
+      - name: Build program
+        run: |
+          cd src
+          make all
+
+      - name: Copy binary to package directory
+        run: |
+          cp src/TRRSPO PR_1.0/usr/local/bin/TRRSPO
+          chmod 755 PR_1.0/usr/local/bin/TRRSPO
+
+      - name: Run tests
+        run: |
+          chmod +x tests/tests.sh
+          cd tests
+          ./tests.sh
+
+      - name: Install packaging tools
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y dpkg-dev fakeroot
+
+      - name: Build deb package
+        run: |
+          dpkg-deb --build PR_1.0
+
+      - name: Upload deb artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: trrspo-deb
+          path: PR_1.0.deb
+
