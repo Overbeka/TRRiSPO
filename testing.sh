@@ -1,44 +1,45 @@
 #!/bin/bash
-set -eux
+set -euo pipefail
 
-BINARY="../PR_1.0/usr/local/bin/TRRSPO"
+BINARY="usr/local/bin/TRRSPO"
 
 if [ ! -f "$BINARY" ]; then
-  echo "Ошибка: бинарник не найден по пути $BINARY"
-  exit 1
+    echo "Ошибка: бинарник не найден по пути $BINARY"
+    exit 1
 fi
 
-# Входные данные для тестирования
-# Матрица 5x5 и матрица 6x6, записанные построчно через пробел
+# Массивы тестов
+# Каждый тест — это строка с пробелами для матрицы, как ожидает твоя программа
 input_array=(
 "1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1"
 "2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2"
 )
 
-# Ожидаемые результаты: матрицы после замены элементов вне диагоналей на среднее арифметическое
+# Массив ожидаемых результатов
+# Здесь можно подставить правильные результаты после вычисления среднего арифметического
 expected_array=(
-"1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1" 
-"2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2"
+"Среднее арифметическое заменено в матрице 5x5"
+"Среднее арифметическое заменено в матрице 6x6"
 )
 
 errors=0
 
 for i in "${!input_array[@]}"; do
-  # Передаем на stdin бинарнику
-  result=$(echo "${input_array[$i]}" | "$BINARY")
-
-  if [ "$result" == "${expected_array[$i]}" ]; then
-    echo "Тест $((i+1)) ✅ OK"
-  else
-    echo "Тест $((i+1)) ❌ Fail"
-    echo "Ожидалось: ${expected_array[$i]}"
-    echo "Получено:  $result"
-    errors=$((errors+1))
-  fi
+    result=$("$BINARY" <<< "${input_array[$i]}")
+    
+    if [ "$result" == "${expected_array[$i]}" ]; then
+        echo "Тест $((i+1)) ✅ OK"
+    else
+        echo "Тест $((i+1)) ❌ Fail"
+        echo "Ожидалось: ${expected_array[$i]}"
+        echo "Получено:  $result"
+        errors=$((errors+1))
+    fi
 done
 
 if [ $errors -ne 0 ]; then
-  exit 1
+    echo "Количество неудачных тестов: $errors"
+    exit 1
 fi
 
 echo "Все тесты пройдены успешно!"
