@@ -1,7 +1,7 @@
 #!/bin/bash
 set -euo pipefail
 
-BINARY="src/TRRSPO"
+BINARY="usr/local/bin/TRRSPO"
 
 if [ ! -f "$BINARY" ]; then
     echo "Ошибка: бинарник не найден по пути $BINARY"
