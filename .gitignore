@@ -1,24 +1,28 @@
-# Go binaries
-TRRSPO
-*.exe
-*.out
-*.test
+# Бинарники
+usr/local/bin/*
+PR_1.0/usr/local/bin/*
+PR_1.0.deb
+artifacts/
 
-# Go build cache
+# Go модули
 /bin/
-/pkg/
+pkg/
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
 
-# Deb packages
-*.deb
 
-# IDE files
-.idea/
+/go.sum
+/go.mod
+
 .vscode/
+.idea/
+*.iml
 
-# OS files
-.DS_Store
-Thumbs.db
-
-# Logs
 *.log
+*.tmp
+*.swp
+
 

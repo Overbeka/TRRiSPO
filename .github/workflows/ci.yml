@@ -35,11 +35,6 @@ jobs:
           go mod tidy || touch ../go.sum
           make all
 
-      - name: Copy binary to package directory
-        run: |
-          cp ../usr/local/bin/TRRSPO ../PR_1.0/usr/local/bin/TRRSPO
-          chmod 755 ../PR_1.0/usr/local/bin/TRRSPO
-
       - name: Run tests
         run: |
           chmod +x ../testing/testing.sh
