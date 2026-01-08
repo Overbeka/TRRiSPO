@@ -39,12 +39,9 @@ jobs:
       - name: Build deb package
         run: |
           set -eux
-          cd PR_1.0
-          dpkg-deb --build . ../PR_1.0.deb
-          cd ..
+          dpkg-deb --build . PR_1.0.deb
           mkdir -p artifacts
           mv PR_1.0.deb artifacts/
-
 
       - name: Upload deb artifact
         uses: actions/upload-artifact@v4
