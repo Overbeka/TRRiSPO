@@ -1,21 +1,13 @@
-
-/bin/
 /usr/local/bin/*
+/bin/
+/artifacts/
 *.exe
-*.exe~
 *.dll
 *.so
 *.dylib
-
-
 .DS_Store
 Thumbs.db
-
-
 .vscode/
 .idea/
 *.iml
-
-
-artifacts/
 

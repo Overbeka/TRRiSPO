@@ -19,24 +19,15 @@ jobs:
         with:
           go-version: '1.25'
 
-      - name: Cache Go modules
-        uses: actions/cache@v3
-        with:
-          path: |
-            ~/go/pkg/mod
-            go.sum
-          key: ${{ runner.os }}-go-${{ hashFiles('go.sum') }}
-          restore-keys: |
-            ${{ runner.os }}-go-
-
       - name: Build program
         run: |
+          set -eux
           cd src
-          go mod tidy
           make all
 
       - name: Run tests
         run: |
+          set -eux
           chmod +x ../testing/testing.sh
           ../testing/testing.sh
 
@@ -47,6 +38,7 @@ jobs:
 
       - name: Build deb package
         run: |
+          set -eux
           dpkg-deb --build ../PR_1.0
           mkdir -p artifacts
           mv ../PR_1.0.deb artifacts/
