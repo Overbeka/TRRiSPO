@@ -28,8 +28,8 @@ jobs:
       - name: Run tests
         run: |
           set -eux
-          chmod +x PR_1.0/testing/testing.sh
-          PR_1.0/testing/testing.sh
+          chmod +x testing.sh
+          ./testing.sh
 
       - name: Install packaging tools
         run: |
