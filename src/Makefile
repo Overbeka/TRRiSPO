@@ -6,6 +6,7 @@ all: build
 
 build:
 	@echo "Компиляция программы..."
+	@mkdir -p $(BIN_DIR)
 	go build -o $(BIN_DIR)/$(APP_NAME) $(SRC_FILE)
 	@echo "Компиляция завершена!"
 
