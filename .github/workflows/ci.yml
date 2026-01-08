@@ -22,15 +22,13 @@ jobs:
       - name: Build program
         run: |
           set -eux
-          cd src
-          make all
+          make -C src all
 
       - name: Run tests
         run: |
           set -eux
           chmod +x testing.sh
           ./testing.sh
-
 
       - name: Install packaging tools
         run: |
