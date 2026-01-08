@@ -32,7 +32,7 @@ jobs:
       - name: Build program
         run: |
           cd src
-          go mod tidy || touch ../go.sum
+          go mod tidy
           make all
 
       - name: Run tests

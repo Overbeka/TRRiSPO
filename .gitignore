@@ -1,12 +1,6 @@
-# Бинарники
-usr/local/bin/*
-PR_1.0/usr/local/bin/*
-PR_1.0.deb
-artifacts/
 
-# Go модули
 /bin/
-pkg/
+/usr/local/bin/*
 *.exe
 *.exe~
 *.dll
@@ -14,15 +8,14 @@ pkg/
 *.dylib
 
 
-/go.sum
-/go.mod
+.DS_Store
+Thumbs.db
+
 
 .vscode/
 .idea/
 *.iml
 
-*.log
-*.tmp
-*.swp
 
+artifacts/
 
