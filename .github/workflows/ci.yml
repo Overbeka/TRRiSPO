@@ -28,8 +28,8 @@ jobs:
       - name: Run tests
         run: |
           set -eux
-          chmod +x ../PR_1.0/testing/testing.sh
-          ../PR_1.0/testing/testing.sh
+          chmod +x PR_1.0/testing/testing.sh
+          PR_1.0/testing/testing.sh
 
       - name: Install packaging tools
         run: |
@@ -39,9 +39,9 @@ jobs:
       - name: Build deb package
         run: |
           set -eux
-          dpkg-deb --build ../PR_1.0
+          dpkg-deb --build PR_1.0
           mkdir -p artifacts
-          mv ../PR_1.0.deb artifacts/
+          mv PR_1.0.deb artifacts/
 
       - name: Upload deb artifact
         uses: actions/upload-artifact@v4
