@@ -40,14 +40,12 @@ jobs:
         run: |
           set -eux
           dpkg-deb --build . PR_1.0.deb
-          mkdir -p artifacts
-          mv PR_1.0.deb artifacts/
 
       - name: Upload deb artifact
         uses: actions/upload-artifact@v4
         with:
           name: trrspo-deb
-          path: artifacts/
+          path: PR_1.0.deb
 
   docker-deploy:
     runs-on: ubuntu-latest
@@ -65,7 +63,6 @@ jobs:
 
       - name: Build Docker image
         run: |
-          cp artifacts/PR_1.0.deb .
           docker build -t trrspo:latest .
 
       - name: Run Docker container
