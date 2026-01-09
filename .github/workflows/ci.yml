@@ -21,11 +21,13 @@ jobs:
 
       - name: Build program
         run: |
+          set -eux
           cd src
           make all
 
       - name: Run tests
         run: |
+          set -eux
           chmod +x testing.sh
           ./testing.sh
 
@@ -36,7 +38,8 @@ jobs:
 
       - name: Build deb package
         run: |
-          dpkg-deb --build PR_1.0
+          set -eux
+          dpkg-deb --build . PR_1.0.deb
           mkdir -p artifacts
           mv PR_1.0.deb artifacts/
 
