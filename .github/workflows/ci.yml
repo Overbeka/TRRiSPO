@@ -1,4 +1,4 @@
-name: CI Pipeline
+name: CI/CD Pipeline
 
 on:
   push:
@@ -21,15 +21,13 @@ jobs:
 
       - name: Build program
         run: |
-          set -eux
           cd src
           make all
 
       - name: Run tests
         run: |
-          set -eux
-          chmod +x testing.sh
-          ./testing.sh
+          chmod +x ../testing.sh
+          ../testing.sh
 
       - name: Install packaging tools
         run: |
@@ -38,8 +36,7 @@ jobs:
 
       - name: Build deb package
         run: |
-          set -eux
-          dpkg-deb --build . PR_1.0.deb
+          dpkg-deb --build PR_1.0
           mkdir -p artifacts
           mv PR_1.0.deb artifacts/
 
@@ -48,4 +45,27 @@ jobs:
         with:
           name: trrspo-deb
           path: artifacts/
+
+  docker-deploy:
+    runs-on: ubuntu-latest
+    needs: build-test-package
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Download deb artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: trrspo-deb
+          path: .
+
+      - name: Build Docker image
+        run: |
+          cp artifacts/PR_1.0.deb .
+          docker build -t trrspo:latest .
+
+      - name: Run Docker container
+        run: |
+          docker run --rm trrspo:latest
 
